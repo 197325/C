@@ -1,0 +1,754 @@
+1.current date and time
+
+views.py
+import datetime
+from django.http import HttpResponse
+from django.shortcuts import render
+# Create your views here.
+def current_date_time(request):
+	now=datetime.datetime.now()
+	result="<html><body><h1>Current Date and time is %s" %(now)
+	return HttpResponse(result)
+
+url.py
+from django.contrib import admin
+from django.urls import path
+from ap1.views import current_date_time,four_hours_ahead,four_hours_beforefrom ap2.views import showlist
+urlpatterns = [
+ path('admin/', admin.site.urls),
+ path('cdt/', current_datetime),
+]
+
+
+
+___________________________________________________________________________________________________________________________________________
+
+2. ahead before time
+
+import datetime
+from django.http import HttpResponse
+from django.shortcuts import render
+# Create your views here.
+def current_date_time(request):
+ now=datetime.datetime.now()
+ result="<html><body><h1>Current Date and time is %s" %(now)
+ return HttpResponse(result)
+def four_hours_ahead(request):
+ dt = datetime.datetime.now() +
+datetime.timedelta(hours=4)
+ html = "<html><body><h1>After 4hour(s), it will be %s.</h1>"% (dt,)
+ return HttpResponse(html) 
+def four_hours_before(request):
+ dt = datetime.datetime.now() +
+datetime.timedelta(hours=-4)
+ html = "<html><body><h1>Before 4 hour(s), it was %s.</h1>"% (dt,)
+ return HttpResponse(html)
+
+url.py
+from django.contrib import admin
+from django.urls import path
+from ap1.views import
+current_date_time,four_hours_ahead,four_hours_before
+urlpatterns = [
+ path('admin/', admin.site.urls),
+ path('cdt/', current_date_time ),y
+ path('fhrsa/',four_hours_ahead),
+ path('fhrsb/',four_hours_before),
+]
+
+
+___________________________________________________________________________________________________________________________________________
+
+3. ordered unordered list
+
+showlist.html
+
+<html>
+ <style type="text/css">
+ #i1 {background-color: lightgreen;color:brown;display:table}
+ #i2 {background-color: black;color:yellow;display:table}
+  </style>
+<body>
+ <h1 id="i1">Unordered list of fruits</h1>
+ <ul>
+ {% for fruit in fruits %}
+ <li>{{ fruit }}</li>
+ {% endfor %}
+ </ul>
+<h1 id="i2">Ordered list of Students</h1>
+ <ol>
+ {% for student in student_names %}
+ <li>{{ student }}</li>
+ {% endfor %}
+ </ol>
+ </body>
+</html>
+
+views.py
+
+from django.shortcuts import render
+# Create your views here.
+def showlist(request):
+ fruits=["Mango","Apple","Banana","Jackfruits"]
+ student_names=["Tony","Mony","Sony","Bob"]
+ return
+render(request,'showlist.html',{"fruits":fruits,"student_names":student_names})
+
+urls.py
+
+from ap2.views import showlist
+urlpatterns = [
+ path('admin/', admin.site.urls),
+ path('showlist/', showlist),
+]
+
+settings.py
+
+TEMPLATES = [
+ {
+ 'DIRS': [os.path.join(BASE_DIR,'ap2/templates'),],
+ }
+
+-----------------------------------------------------------------------------------------------------------------
+4. home page, about us, contact us
+
+views.py
+
+from django.shortcuts import render
+def home(request):
+ return render(request,'home.html')
+def aboutus(request):
+ return render(request,'aboutus.html')
+def contactus(request):
+ return render(request,'contactus.html')
+
+url.py
+
+from django.urls import path
+from ap2.views import aboutus,home,contactus
+urlpatterns = [
+ path('aboutus/', aboutus),
+ path('home/', home),
+ path('contactus/', contactus),
+]
+
+
+layout.html
+
+<html>
+ <title>{% block title %} {% endblock %} </title> <style type="text/css">
+ nav {background-color: lightblue;padding:10px} </style>
+ <body>
+ <nav>
+ <a href="/home/">Home</a>|
+ <a href="/aboutus/">About Us</a>|
+ <a href="/contactus/">Contact Us</a>|
+  </nav>
+ <section>
+ {% block content %}{% endblock %}
+ </section>
+ <footer>
+ <hr>
+ &copy; Developed by Sir MVIT, Bengaluru  </footer>
+ </body>
+</html>
+
+home.html
+{% extends 'layout.html' %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+<h2>This is the home page</h2>
+{% endblock %}
+
+aboutus.html
+{% extends 'layout.html' %}
+{% block title %}
+About Us
+{% endblock %}
+{% block content %}
+<h2>We are DJango developers</h2>
+{% endblock %}
+
+contactus.html
+{% extends 'layout.html' %}
+{% block title %}
+Contact us
+{% endblock %}
+{% block content %}
+<h2> phone: 9900556688 <br> Address: Sir
+MVIT,Bengaluru</h2> 
+{% endblock %}
+
+--------------------------------------------------------------------------------------------
+5.student
+
+course_search.html
+<html>
+ <body>
+ <form method="POST" action="">
+ Courses
+ {% csrf_token %}
+<select name="cname">
+ {%for course in courses %}
+ <option value="{{course.id}}">{{course.course_name}}</option> {% endfor %}
+ </select>
+<input type="submit" value="Search">
+ </form>
+ </body>
+</html>
+
+reg.html
+<html>
+ <body>
+ <form method="post" action="">
+ {% csrf_token %}
+ Student Name
+ <select name="sname">
+ {%for student in students %}
+ <option value="{{student.id}}">{{student.student_name}}</option> {% endfor %}
+</select><br>
+ Course Name
+ <select name="cname">
+ {%for course in courses %}
+ <option value="{{course.id}}">{{course.course_name}}</option> {% endfor %}
+</select><br>
+<input type="submit" value="Enroll">
+ </form>
+  </body>
+</html>
+
+selected_student.html
+<html>
+ <body>
+ <table border>
+ <tr>
+ <th>Student Name</th>
+<th>Student USN</th>
+<th>Sem</th>
+ </tr>
+{% for student in student_list %}
+ <tr>
+ <td>{{student.student_name}}</td>
+ <td>{{student.student_usn}}</td>
+ <td>{{student.student_sem}}</td>
+ </tr>
+{% endfor %}
+ </table>
+ </body>
+</html>
+
+models.py
+from django.db import models
+# Create your models here.
+class Course(models.Model):
+ course_code=models.CharField(max_length=40)
+ course_name=models.CharField(max_length=100)
+ course_credits=models.IntegerField()
+class Student(models.Model):
+ student_usn=models.CharField(max_length=20)
+ student_name=models.CharField(max_length=100)
+ student_sem=models.IntegerField()
+ enrolment=models.ManyToManyField(Course)
+
+
+views.py
+
+from django.http import HttpResponse
+from django.shortcuts import render
+from ap3.models import Course, Student
+# Create your views here.
+def reg(request):
+ if request.method == "POST":
+ sid=request.POST.get("sname")
+ cid=request.POST.get("cname")
+ student=Student.objects.get(id=sid)
+ course=Course.objects.get(id=cid)
+ res=student.enrolment.filter(id=cid)
+ if res:
+ return HttpResponse("<h1>Student already enrolled</h1>")
+ student.enrolment.add(course)
+ return HttpResponse("<h1>Student enrolled successfully</h1>")
+ else:
+ students=Student.objects.all()
+ courses=Course.objects.all()
+ return render(request,"reg.html",{"students":students,
+"courses":courses})
+def course_search(request):
+ if request.method=="POST":
+ cid=request.POST.get("cname")
+ s=Student.objects.all()
+ student_list=list()
+for student in s:
+ if student.enrolment.filter(id=cid):
+ student_list.append(student)
+ if len(student_list)==0:
+ return HttpResponse("<h1>No Students enrolled</h1>")
+ return
+render(request,"selected_student.html",{"student_list":student_list})
+ else:
+ courses=Course.objects.all()
+ return render(request,"course_search.html",{"courses":courses})
+
+
+urls.py
+
+from ap3.views import reg, course_search
+
+urlpatterns = [
+ path('admin/', admin.site.urls),
+ path('reg/', reg),
+ path('course_search/',course_search),
+]
+
+
+settings.py
+
+INSTALLED_APPS = [
+	'ap3'
+]
+TEMPLATES = [
+	'DIRS': [os.path.join(BASE_DIR,'ap3/templates'),],
+	]
+DATABASES = {
+ 'default': {
+ 'ENGINE': 'django.db.backends.mysql',
+ 'NAME': 'studentreg',
+ 'USER': 'root',
+ 'PASSWORD': '',
+ 'HOST':'localhost',
+ 'PORT':'3306',
+ }
+}
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS=[os.path.join(BASE_DIR, 'ap3/static')]
+
+---------------------------------------------------------------------------------------------------------------------
+6.admin forms
+
+admin.py
+
+from django.contrib import admin
+from ap3.models import Course, Student
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+list_display = ('student_name','student_usn','student_sem')
+ordering=('student_name',)
+search_fields = ('student_name',)
+admin.site.register(Course)
+
+urls.py
+
+from django.contrib import admin
+from django.urls import path, re_path
+from ap3.views import reg,course_search
+
+urlpatterns = [
+path('secretadmin/', admin.site.urls),
+]
+
+models.py
+
+from django.db import models
+from django.forms import ModelForm
+# Create your models here. 
+class Meeting(models.Model):
+	meeting_code=models.CharField(max_length=100)
+	meeting_dt=models.DateField(auto_now_add=True)
+	meeting_subject=models.CharField(max_length=100)meeting_np=models.IntegerField()
+class Course(models.Model): 
+	course_code=models.CharField(max_length=40)
+	course_name=models.CharField(max_length=100)
+	course_credits=models.IntegerField(blank=True, null=True)
+	def str(self):
+		return self.course_name
+class Student(models.Model):
+	student_usn=models.CharField(max_length=20)
+	student_name=models.CharField(max_length=100)
+	student_sem=models.IntegerField()
+	enrolment=models.ManyToManyField(Course)
+	def str (self):
+	return self.student_name+"("+self.student_usn+")"
+
+-------------------------------------------------------------------------------------------------------------------------
+7. project
+
+models.py
+
+from django.db import models
+from django.forms import ModelForm
+# Create your models here. 
+class Meeting(models.Model):
+	meeting_code=models.CharField(max_length=100)
+	meeting_dt=models.DateField(auto_now_add=True)
+	meeting_subject=models.CharField(max_length=100)meeting_np=models.IntegerField()
+class Course(models.Model): 
+	course_code=models.CharField(max_length=40)
+	course_name=models.CharField(max_length=100)
+	course_credits=models.IntegerField(blank=True, null=True)def str
+	(self):
+	return self.course_name
+class Student(models.Model):
+	student_usn=models.CharField(max_length=20)
+	student_name=models.CharField(max_length=100)
+	student_sem=models.IntegerField()
+	enrolment=models.ManyToManyField(Course)
+	def str (self):
+	return self.student_name+"("+self.student_usn+")"
+class Project(models.Model): 
+	student=models.ForeignKey(Student,on_delete=models.CASCADE)
+	ptopic=models.CharField(max_length=200) 
+	plangauges=models.CharField(max_length=200)
+	pduration=models.IntegerField()
+class ProjectReg(ModelForm):
+	required_css_class="required"
+	class Meta:
+	model=Project fields=['student','ptopic','plangauges','pduration']
+
+views.py
+
+from django.http import HttpResponsefrom
+django.shortcuts import render
+from ap3.models import Course, Meeting, ProjectReg, Student
+def add_project(request):
+if request.method=="POST":
+form=ProjectReg(request.POST)if
+form.is_valid():
+form.save()
+return HttpResponse("<h1>Record inserted successfully</h1>")else:
+return HttpResponse("<h1>Record not inserted</h1>")
+else:
+form=ProjectReg()
+return render(request,"add_project.html",{"form":form})
+
+
+add_project.html inside templates folder
+
+<html>
+<form method="post" action="">
+{% csrf_token %}
+<table>
+{{ form.as_table}}
+<tr>
+<td>
+<input type="submit" value="Submit">
+</td>
+</tr>
+</table>
+</form>
+</html>
+
+urls.py
+from django.contrib import admin
+from django.urls import path, re_path
+ap3.views import reg,course_search,add_project
+admin.site.site_header="My Site Header"
+admin.site.site_title="My Site Title"
+admin.site.index_title="My Site Index" urlpatterns
+= [
+path('secretadmin/', admin.site.urls),ppath('add_project/', add_project),
+]
+
+-------------------------------------------------------------------------------------------------------------------------
+8.generic class
+
+view.py 
+
+from django.views import generic
+class StudentListView(generic.ListView):
+model=Student
+template_name="student_list.html"
+
+class StudentDetailView(generic.DetailView):
+model=Student
+template_name="student_detail.html"
+
+
+student_list.html inside templates folder
+<html>
+<body>
+{% if student_list %}
+<table border>
+<tr>
+<th>USN</th>
+<th>Courses Enrolled</th>
+</tr>
+{% for student in student_list %}
+<tr>
+<td><a href="/student_detail/{{student.pk}}">{{
+student.student_usn }}</a></td>
+<td>{% for course in student.enrolment.all %}
+<span>{{ course.course_name }}</span>
+{% endfor %}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<h1>No Students Enrolled</h1>
+{% endif %}
+</body>
+</html>
+
+
+student_detail.html inside templates folder
+<h1>Student Name: {{ student.student_name }}</h1>
+<h1>Student USN: {{ student.student_usn }}</h1>
+<h1>Student Sem: {{ student.student_sem }}</h1>
+
+urls.py
+
+urlpatterns
+= [
+path('secretadmin/', admin.site.urls),
+path('add_project/', add_project),
+path('student_list/', StudentListView.as_view()), path('student_detail/<int:pk>/',
+StudentDetailView.as_view()),
+]
+
+----------------------------------------------------------------------------------------------------------------------------
+10. csv pdf
+
+views.py
+
+from django.http import HttpResponsefrom
+django.shortcuts import render
+from ap3.models import Course, Meeting, ProjectReg, Studentimport csv
+def construct_csv_from_model(request):
+courses=Course.objects.all()
+response=HttpResponse(content_type="text/csv")
+response['Content-Disposition'] = 'attachment;
+filename="courses_data.csv"'
+writer=csv.writer(response)
+writer.writerow(["Course Name","Course Code","Credits"])for course in
+courses:
+writer.writerow([course.course_name,course.course_code,course.course_credits])
+return response
+
+from django.http import HttpResponsefrom
+django.shortcuts import render
+from ap3.models import Course, Meeting, ProjectReg, Studentfrom
+reportlab.pdfgen import canvas
+def construct_pdf_from_model(request): 
+courses=Course.objects.all()
+response=HttpResponse(content_type="application/pdf")
+response['Content-Disposition'] = 'attachment;
+filename="courses_data.pdf"'
+c=canvas.Canvas(response)
+c.drawString(70,720,"Course Name")
+c.drawString(170,720,"Course Code")
+c.drawString(270,720,"Credits") y=660
+for course in courses: c.drawString(70,y,course.course_name)
+c.drawString(170,y,course.course_code)
+c.drawString(270,y,str(course.course_credits))y=y-60
+c.showPage()
+c.save()
+return response
+
+urls.py
+
+from ap3.views import construct_csv_from_model
+urlpatterns
+= [
+path('secretadmin/', admin.site.urls),
+path('construct_csv_from_model/', construct_csv_from_model),
+path('construct_csv_from_model/', construct_csv_from_model),
+path('construct_pdf_from_model/', construct_pdf_from_model),
+]
+
+-----------------------------------------------------------------------------------------------------------------------
+10. ajax
+
+views.py
+
+from django.http import HttpResponse
+from django.shortcuts import render 
+from ap10.models import Course, Student
+def regaj(request): 
+    if request.method == "POST": 
+        sid=request.POST.get("sname") 
+        cid=request.POST.get("cname") 
+        student=Student.objects.get(id=sid) 
+        course=Course.objects.get(id=cid) 
+        res=student.enrolment.filter(id=cid)
+        if res: 
+            return HttpResponse("<h1>Student already enrolled</h1>") 
+        student.enrolment.add(course) 
+        return HttpResponse("<h1>Student enrolled successfully</h1>") 
+    else: 
+        students=Student.objects.all() 
+        courses=Course.objects.all() 
+    return render(request,"regaj.html",{"students":students, 
+"courses":courses}) 
+
+models.py
+
+from django.db import models
+class Course(models.Model): 
+    course_code=models.CharField(max_length=40)
+    course_name=models.CharField(max_length=100)
+    course_credits=models.IntegerField(blank=True, null=True)
+
+def str(self):
+    return self.course_name
+
+class Student(models.Model):
+    student_usn=models.CharField(max_length=20)
+    student_name=models.CharField(max_length=100)
+    student_sem=models.IntegerField()
+    enrolment=models.ManyToManyField(Course)
+def str (self):
+    return self.student_name+"("+self.student_usn+")"
+
+regaj.html in templates
+{% load static %}
+<html>
+<body>
+<form method="post" action="">
+    {% csrf_token %}
+    Student Name
+    <select name="sname" id="sname">
+    {%for student in students %}
+    <option value="{{student.id}}">{{student.student_name}}</option>
+    {% endfor %}
+    </select><br>
+    Course Name
+    <select name="cname" id="cname">
+    {%for course in courses %}
+    <option value="{{course.id}}">{{course.course_name}}</option>
+    {% endfor %}
+    </select><br>
+    <span id="ans"></span>
+    <input type="button" value="Enroll" id="ebtn">
+</form>
+<script src="{% static 'jquery.min.js' %}"></script>
+<script>
+    $(document).ready(function(){
+    $("#ebtn").click(function(){
+    var sname = $("#sname").val();var
+    cname = $("#cname").val();
+    $.ajax({
+    type: "POST", url:
+    "/regaj/",
+    data: {sname: sname, cname: cname,
+    csrfmiddlewaretoken:"{{ csrf_token}}"
+    },
+    success:function(response){
+    $("#ans").html(response)
+
+    });
+    });
+    }
+    });
+
+</script>
+</body>
+</html>
+
+
+urls.py
+from django.contrib import admin
+from django.urls import path
+from ap10.views import regaj
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('regaj/',regaj),
+]
+
+--------------------------------------------------------------------------------------------------------------------------------
+11.ajax
+
+views.py
+
+from django.http import HttpResponse
+from django.shortcuts import render
+from ap10.models import Course, Student
+
+def course_search_ajax(request):
+    if request.method=="POST":
+        cid=request.POST.get("cname")
+        s=Student.objects.all() 
+        student_list=list()
+        for student in s:
+            if student.enrolment.filter(id=cid):
+                student_list.append(student)
+        if len(student_list)==0:
+            return HttpResponse("<h1>No Students enrolled</h1>")
+        return render(request,"selected_students.html",{"student_list":student_list})
+    else:
+        courses=Course.objects.all()
+        return render(request,"course_search_ajax.html",{"courses":courses})
+
+
+models.py
+
+from django.db import models
+class Course(models.Model): 
+    course_code=models.CharField(max_length=40)
+    course_name=models.CharField(max_length=100)
+    course_credits=models.IntegerField(blank=True, null=True)
+
+def str(self):
+    return self.course_name
+
+class Student(models.Model):
+    student_usn=models.CharField(max_length=20)
+    student_name=models.CharField(max_length=100)
+    student_sem=models.IntegerField()
+    enrolment=models.ManyToManyField(Course)
+def str (self):
+    return self.student_name+"("+self.student_usn+")"
+
+
+course_search_ajax.html in templates
+{% load static %} 
+<html> 
+<body> 
+<form method="POST" action=""> 
+Courses 
+{% csrf_token %} 
+<select name="cname" id="cname"> 
+{%for course in courses %} 
+<option value="{{course.id}}">{{course.course_name}}</option> 
+{% endfor %} 
+</select> 
+<input type="button" value="Search" id="serbtn"> 
+<span id="result"></span> 
+</form> 
+</body> 
+<script src="{% static 'jquery.min.js' %}"></script> 
+<script> 
+$(document).ready(function(){ 
+$("#serbtn").click(function(){ 
+var cname = $("#cname").val(); 
+$.ajax({
+
+url: "/course_search_ajax/",type: 
+"POST", 
+data: {cname:cname,csrfmiddlewaretoken:"{{csrf_token }}"},success: function(response){ 
+$("#result").html(response);
+
+} 
+}); 
+}); 
+}); 
+</script> 
+</html> 
+
+
+urls.py
+from django.contrib import admin
+from django.urls import path, re_path
+from ap10.views import course_search_ajax
+admin.site.site_header="My Site Header"
+admin.site.site_title="My Site Title"
+admin.site.index_title="My Site Index"
+urlpatterns = [
+ path('course_search_ajax/',
+course_search_ajax),
+]
+
